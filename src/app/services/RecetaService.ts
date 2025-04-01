@@ -9,4 +9,7 @@ export class RecetaService {
     async getReceta(id: number): Promise<Receta | undefined> {
         return this.repo.getRecetaById(id)
     }
+    async createReceta(receta: Omit<Receta, 'id'>): Promise<Receta> {
+        return this.repo.createReceta(receta)
+    }
 }
