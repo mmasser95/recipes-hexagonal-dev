@@ -11,9 +11,9 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import Tab1 from './ui/pages/Tab1';
+import Tab2 from './ui/pages/Tab2';
+import Tab3 from './ui/pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,6 +44,7 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import RecetaDetail from './ui/components/Recetas/RecetaDetail';
 
 setupIonicReact();
 
@@ -60,6 +61,9 @@ const App: React.FC = () => (
           </Route>
           <Route path="/tab3">
             <Tab3 />
+          </Route>
+          <Route path='/receta/:id'>
+            <RecetaDetail />
           </Route>
           <Route exact path="/">
             <Redirect to="/tab1" />
