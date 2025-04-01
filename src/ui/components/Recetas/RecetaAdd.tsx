@@ -57,17 +57,27 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                             )
                             )}
                         </IonSelect>
-
                     </IonCol>
                     <IonCol>
-                        <IonButton slot="icon-only">
-                            Hola2
-                            <IonIcon icon={add} />
+                        <IonButton>
+                            Añadir
                         </IonButton>
                     </IonCol>
                 </IonRow>
             </IonGrid>
-            <IonButton>Hola</IonButton>
+            <IonGrid>
+                <IonRow>
+                    <IonCol>
+                        <IonInput label="Texto" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, texto: e.detail.value! })} />
+                    </IonCol>
+                    <IonCol>
+                        <IonInput label="Tiempo" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, tiempo: e.detail.value! })} />
+                    </IonCol>
+                    <IonCol>
+                        <IonButton>Añadir</IonButton>
+                    </IonCol>
+                </IonRow>
+            </IonGrid>
         </ModalLayout >
     )
 }
