@@ -1,22 +1,29 @@
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { Receta } from "../../../domain/entities/receta";
 import { RecetaRepository } from "../../../ports/RecetaRepository";
-import { Capacitor } from "@capacitor/core";
 
 export class JsonRecetaRepository implements RecetaRepository {
     private readonly FILE_PATH = 'recetas.json';
     async getRecetas(): Promise<Receta[]> {
-        if (Capacitor.getPlatform() === "android") {
+        // if (Capacitor.getPlatform() === "android") {
+        try {
             const file = await Filesystem.readFile({
                 path: this.FILE_PATH,
                 directory: Directory.Data,
                 encoding: Encoding.UTF8
             })
             return JSON.parse(file.data as string)
-        } else {
+        } catch (err) {
+            console.error(err);
             const res = await fetch('/data/recetas.json')
-            return res.json()
+            const data = await res.json()
+            await this.saveRecetas(data)
+            return data
         }
+        // } else {
+        //     const res = await fetch('/data/recetas.json')
+        //     return res.json()
+        // }
     }
     async getRecetaById(id: number): Promise<Receta | undefined> {
         const recetas = await this.getRecetas()
