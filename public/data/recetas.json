@@ -1,26 +1,175 @@
 [
     {
         "id": 1,
-        "nombre": "Pasta Carbonara",
+        "nombre": "Pasta a la Carbonara",
         "ingredientes": [
-            "Pasta",
-            "Huevo",
-            "Panceta",
-            "Queso Pecorino"
+            {
+                "nombre": "Spaghetti",
+                "cantidad": 400,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Panceta o guanciale",
+                "cantidad": 150,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Huevos",
+                "cantidad": 3,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Queso Pecorino Romano",
+                "cantidad": 50,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Queso Parmesano",
+                "cantidad": 50,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Pimienta negra",
+                "cantidad": 1,
+                "magnitud": "cucharadas",
+                "unidad": "cucharadita"
+            },
+            {
+                "nombre": "Sal",
+                "cantidad": 1,
+                "magnitud": "cucharadas",
+                "unidad": "cucharadita"
+            }
         ],
-        "instrucciones": "1. Cocinar la pasta...",
-        "imagen": "carbonara.jpg"
+        "instrucciones": [
+            {
+                "orden": 1,
+                "texto": "Poner a hervir agua en una olla grande y agregar sal cuando empiece a burbujear."
+            },
+            {
+                "orden": 2,
+                "texto": "Cocinar los spaghetti según las instrucciones del paquete hasta que estén al dente."
+            },
+            {
+                "orden": 3,
+                "texto": "Mientras tanto, cortar la panceta en trozos pequeños y dorarla en una sartén a fuego medio hasta que esté crujiente."
+            },
+            {
+                "orden": 4,
+                "texto": "En un tazón, batir los huevos y mezclarlos con el queso Pecorino, el Parmesano y la pimienta negra."
+            },
+            {
+                "orden": 5,
+                "texto": "Escurrir la pasta, reservando un poco del agua de cocción."
+            },
+            {
+                "orden": 6,
+                "texto": "Fuera del fuego, mezclar rápidamente la pasta con la panceta y luego agregar la mezcla de huevo y queso, revolviendo bien para que no cuaje el huevo. Si es necesario, agregar un poco del agua reservada para crear una salsa cremosa."
+            },
+            {
+                "orden": 7,
+                "texto": "Servir inmediatamente con un poco más de queso rallado y pimienta negra al gusto."
+            }
+        ],
+        "imagen": "https://ejemplo.com/imagen-carbonara.jpg"
     },
     {
         "id": 2,
-        "nombre": "Ensalada César",
+        "nombre": "Lentejas a la Jardinera con Costilla de Cerdo",
         "ingredientes": [
-            "Lechuga",
-            "Pollo",
-            "Crutones",
-            "Salsa César"
+            {
+                "nombre": "Lentejas",
+                "cantidad": 300,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Costilla de cerdo",
+                "cantidad": 250,
+                "magnitud": "gramos"
+            },
+            {
+                "nombre": "Cebolla",
+                "cantidad": 1,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Zanahoria",
+                "cantidad": 2,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Pimiento verde",
+                "cantidad": 1,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Tomate maduro",
+                "cantidad": 1,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Ajo",
+                "cantidad": 2,
+                "magnitud": "dientes"
+            },
+            {
+                "nombre": "Hoja de laurel",
+                "cantidad": 1,
+                "magnitud": "unidades"
+            },
+            {
+                "nombre": "Pimentón dulce",
+                "cantidad": 1,
+                "magnitud": "cucharadas",
+                "unidad": "cucharadita"
+            },
+            {
+                "nombre": "Aceite de oliva",
+                "cantidad": 3,
+                "magnitud": "cucharadas"
+            },
+            {
+                "nombre": "Sal",
+                "cantidad": 1,
+                "magnitud": "cucharadas",
+                "unidad": "cucharadita"
+            },
+            {
+                "nombre": "Agua",
+                "cantidad": 1.5,
+                "magnitud": "litros"
+            }
         ],
-        "instrucciones": "1. Mezclar la lechuga...",
-        "imagen": "cesar.jpg"
+        "instrucciones": [
+            {
+                "orden": 1,
+                "texto": "Lavar las lentejas bajo el agua fría y escurrirlas."
+            },
+            {
+                "orden": 2,
+                "texto": "En una olla grande, calentar el aceite de oliva y dorar las costillas de cerdo hasta que estén ligeramente tostadas. Retirar y reservar."
+            },
+            {
+                "orden": 3,
+                "texto": "En el mismo aceite, sofreír la cebolla, el ajo, el pimiento verde, la zanahoria y el tomate (todo picado) hasta que estén tiernos."
+            },
+            {
+                "orden": 4,
+                "texto": "Añadir el pimentón dulce y mezclar rápidamente para que no se queme."
+            },
+            {
+                "orden": 5,
+                "texto": "Incorporar las lentejas, las costillas reservadas, la hoja de laurel y el agua. Sazonar con sal."
+            },
+            {
+                "orden": 6,
+                "texto": "Cocinar a fuego medio-bajo durante 40-50 minutos, o hasta que las lentejas estén tiernas. Si es necesario, agregar más agua."
+            },
+            {
+                "orden": 7,
+                "texto": "Rectificar la sal y servir caliente, acompañado de pan fresco."
+            }
+        ],
+        "imagen": "https://ejemplo.com/imagen-lentejas-jardinera.jpg"
     }
 ]
