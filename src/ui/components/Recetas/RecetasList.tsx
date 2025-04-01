@@ -9,11 +9,11 @@ import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-com
 const RecetasList: React.FC = () => {
     const [recetas, setRecetas] = useState<Receta[]>([])
 
+    const loadRecetas = async () => {
+        const data = await recetaService.getAllRecetas()
+        setRecetas(data)
+    }
     useEffect(() => {
-        const loadRecetas = async () => {
-            const data = await recetaService.getAllRecetas()
-            setRecetas(data)
-        }
         loadRecetas()
     }, [])
 
@@ -25,7 +25,7 @@ const RecetasList: React.FC = () => {
         presentCreateRecipes({
             onWillDismiss: (e: CustomEvent<OverlayEventDetail>) => {
                 if (e.detail.role === 'confirm')
-                    console.log(`Hello, ${e.detail.data}`);
+                    loadRecetas()
             }
         })
     }
