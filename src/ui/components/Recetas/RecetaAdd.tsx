@@ -1,10 +1,10 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonIcon } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
 import { useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
 import { Receta } from "../../../domain/entities/receta"
 import { Paso } from "../../../domain/entities/paso"
-import { add } from "ionicons/icons"
+import { recetaService } from "../../../infrastructure/config"
 
 interface Props {
     dismiss: (data: string, role: string) => void
@@ -30,22 +30,60 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
 
     const magnitudes: Magnitud[] = ["gramos", "mililitros", "unidades", "cucharadas"];
 
+    const createIt = async () => {
+        try {
+            await recetaService.createReceta(receta)
+            dismiss("", "confirm")
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const addIngrediente = () => {
+        setReceta({
+            ...receta,
+            ingredientes: [...receta.ingredientes, ingrediente]
+        })
+        setIngrediente({
+            nombre: "",
+            cantidad: 0,
+            magnitud: "gramos"
+        })
+    }
+
+    const addPaso = () => {
+        const newPasoId = Math.max(0, ...receta.instrucciones.map(el => el.orden)) + 1
+        const newPaso: Paso = { ...paso, orden: newPasoId }
+        setReceta({
+            ...receta,
+            instrucciones: [...receta.instrucciones, newPaso]
+        })
+        setPaso({
+            texto: ""
+        })
+    }
+
     return (
         <ModalLayout
             title="Crear receta"
             dismiss={dismiss}
         >
-            <IonInput label="Nombre receta" labelPlacement="floating" onIonChange={e => setReceta({ ...receta, nombre: e.detail.value! })} />
             <IonGrid>
                 <IonRow>
                     <IonCol>
-                        <IonInput label="Nombre ingrediente" labelPlacement="floating" onIonChange={e => setIngrediente({ ...ingrediente, nombre: e.detail.value! })} />
+                        <IonInput label="Nombre receta" labelPlacement="floating" onIonChange={e => setReceta({ ...receta, nombre: e.detail.value! })} />
                     </IonCol>
-                    <IonCol>
-                        <IonInput label="Cantidad ingrediente" labelPlacement="floating" onIonChange={e => setIngrediente({ ...ingrediente, cantidad: parseFloat(e.detail.value!) })} />
+                </IonRow>
+                <IonRow>
+                    <IonCol size="5">
+                        <IonInput label="Nombre ingrediente" labelPlacement="floating" onIonChange={e => setIngrediente({ ...ingrediente, nombre: e.detail.value! })} value={ingrediente.nombre} />
                     </IonCol>
-                    <IonCol>
+                    <IonCol size="2">
+                        <IonInput type="number" label="Cantidad" labelPlacement="floating" onIonChange={e => setIngrediente({ ...ingrediente, cantidad: parseFloat(e.detail.value!) })} value={ingrediente.cantidad} />
+                    </IonCol>
+                    <IonCol size="3">
                         <IonSelect
+                            id="ingredienteMag"
                             value={ingrediente.magnitud}
                             onIonChange={e => setIngrediente({ ...ingrediente, magnitud: e.detail.value })}
                         >
@@ -59,22 +97,47 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                         </IonSelect>
                     </IonCol>
                     <IonCol>
-                        <IonButton>
+                        <IonButton onClick={addIngrediente}>
                             Añadir
                         </IonButton>
                     </IonCol>
                 </IonRow>
-            </IonGrid>
-            <IonGrid>
                 <IonRow>
                     <IonCol>
-                        <IonInput label="Texto" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, texto: e.detail.value! })} />
+                        {receta.ingredientes.length > 0 && <IonList>
+                            {receta.ingredientes.map(el => (
+                                <IonItem>
+                                    {el.nombre} - {el.cantidad} {el.magnitud}
+                                </IonItem>
+                            ))}
+                        </IonList>}
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol size="8">
+                        <IonTextarea autoGrow={true} label="Texto" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, texto: e.detail.value! })} value={paso.texto} />
                     </IonCol>
                     <IonCol>
-                        <IonInput label="Tiempo" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, tiempo: e.detail.value! })} />
+                        <IonInput type="number" label="Tiempo" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, tiempo: e.detail.value! })} value={paso.tiempo ? paso.tiempo : ""} />
                     </IonCol>
                     <IonCol>
-                        <IonButton>Añadir</IonButton>
+                        <IonButton onClick={addPaso}>Añadir</IonButton>
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol>
+                        {receta.instrucciones.length > 0 && <IonList>
+                            {receta.instrucciones.map(el => (
+                                <IonItem>
+                                    {el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}
+                                </IonItem>
+                            ))}
+                        </IonList>}
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol>
+                        <IonButton expand="block" onClick={createIt}>Crear receta</IonButton>
                     </IonCol>
                 </IonRow>
             </IonGrid>
