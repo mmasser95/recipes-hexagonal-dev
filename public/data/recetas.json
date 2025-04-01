@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nombre": "Pasta Carbonara",
+        "ingredientes": [
+            "Pasta",
+            "Huevo",
+            "Panceta",
+            "Queso Pecorino"
+        ],
+        "instrucciones": "1. Cocinar la pasta...",
+        "imagen": "carbonara.jpg"
+    },
+    {
+        "id": 2,
+        "nombre": "Ensalada César",
+        "ingredientes": [
+            "Lechuga",
+            "Pollo",
+            "Crutones",
+            "Salsa César"
+        ],
+        "instrucciones": "1. Mezclar la lechuga...",
+        "imagen": "cesar.jpg"
+    }
+]
