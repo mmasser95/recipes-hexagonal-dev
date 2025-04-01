@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Receta } from "../../../domain/entities/receta"
 import { recetaService } from "../../../infrastructure/config"
-import { IonButton, IonButtons, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, useIonAlert, useIonModal, } from "@ionic/react"
+import { IonButton, IonButtons, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, } from "@ionic/react"
 import { add, trashOutline } from "ionicons/icons"
 import RecetaAdd from "./RecetaAdd"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
@@ -51,8 +51,16 @@ const RecetasList: React.FC = () => {
         })
     }
 
+    const handleRefresh = async (e: CustomEvent<RefresherEventDetail>) => {
+        await loadRecetas()
+        e.detail.complete()
+    }
+
     return (
         <>
+            <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                <IonRefresherContent></IonRefresherContent>
+            </IonRefresher>
             <IonList>
                 {recetas.map(receta => (
                     <IonItem key={receta.id}
