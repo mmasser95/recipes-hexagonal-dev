@@ -45,4 +45,11 @@ export class JsonRecetaRepository implements RecetaRepository {
             encoding: Encoding.UTF8
         })
     }
+    async deleteReceta(id: number): Promise<void> {
+        const recetas = await this.getRecetas()
+        const updatedRecetas = recetas.filter(r => r.id != id)
+        if (updatedRecetas.length == recetas.length)
+            throw new Error(`Receta con ID ${id} no encontrada`);
+        await this.saveRecetas(updatedRecetas)
+    }
 }

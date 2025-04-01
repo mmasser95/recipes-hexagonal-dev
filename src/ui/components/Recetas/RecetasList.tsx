@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Receta } from "../../../domain/entities/receta"
 import { recetaService } from "../../../infrastructure/config"
-import { IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, useIonModal, } from "@ionic/react"
-import { add } from "ionicons/icons"
+import { IonButton, IonButtons, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, useIonAlert, useIonModal, } from "@ionic/react"
+import { add, trashOutline } from "ionicons/icons"
 import RecetaAdd from "./RecetaAdd"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 
@@ -21,12 +21,33 @@ const RecetasList: React.FC = () => {
         dismiss: (data: string, role: string) => dismissCreateRecipes(data, role),
     })
 
+    const [presentAlert] = useIonAlert()
+
     const showCreateRecipesModal = () => {
         presentCreateRecipes({
             onWillDismiss: (e: CustomEvent<OverlayEventDetail>) => {
                 if (e.detail.role === 'confirm')
                     loadRecetas()
             }
+        })
+    }
+
+    const handleDelete = (id: number) => {
+        presentAlert({
+            header: "Estas seguro?",
+            message: "Estas seguro que quieres borrar la receta? Esta accion será irreversible",
+            buttons: [
+                {
+                    text: "Si",
+                    handler: async () => {
+                        await recetaService.deleteReceta(id)
+                        await loadRecetas()
+                    }
+                },
+                {
+                    text: "No",
+                }
+            ]
         })
     }
 
@@ -40,6 +61,15 @@ const RecetasList: React.FC = () => {
                         <IonLabel>
                             {receta.nombre}
                         </IonLabel>
+                        <IonButtons slot="end">
+                            <IonButton onClick={(e) => {
+                                e.stopPropagation()
+                                e.preventDefault()
+                                handleDelete(receta.id)
+                            }} color="danger" fill="clear" shape="round" slot="icon-only">
+                                <IonIcon icon={trashOutline} />
+                            </IonButton>
+                        </IonButtons>
                     </IonItem>
                 ))
                 }
