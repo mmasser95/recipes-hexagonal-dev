@@ -1,10 +1,11 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
 import { useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
 import { Receta } from "../../../domain/entities/receta"
 import { Paso } from "../../../domain/entities/paso"
 import { recetaService } from "../../../infrastructure/config"
+import { add } from "ionicons/icons"
 
 interface Props {
     dismiss: (data: string, role: string) => void
@@ -97,8 +98,8 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                         </IonSelect>
                     </IonCol>
                     <IonCol>
-                        <IonButton onClick={addIngrediente}>
-                            Añadir
+                        <IonButton shape="round" fill="outline" onClick={addIngrediente}>
+                            <IonIcon slot="icon-only" icon={add} />
                         </IonButton>
                     </IonCol>
                 </IonRow>
@@ -113,15 +114,17 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                         </IonList>}
                     </IonCol>
                 </IonRow>
-                <IonRow>
-                    <IonCol size="8">
+                <IonRow className="ion-align-items-center ion-justify-content-center">
+                    <IonCol size="7">
                         <IonTextarea autoGrow={true} label="Texto" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, texto: e.detail.value! })} value={paso.texto} />
                     </IonCol>
-                    <IonCol>
+                    <IonCol size="3">
                         <IonInput type="number" label="Tiempo" labelPlacement="floating" onIonChange={e => setPaso({ ...paso, tiempo: e.detail.value! })} value={paso.tiempo ? paso.tiempo : ""} />
                     </IonCol>
                     <IonCol>
-                        <IonButton onClick={addPaso}>Añadir</IonButton>
+                        <IonButton onClick={addPaso} shape="round" fill="outline">
+                            <IonIcon slot="icon-only" icon={add} />
+                        </IonButton>
                     </IonCol>
                 </IonRow>
                 <IonRow>

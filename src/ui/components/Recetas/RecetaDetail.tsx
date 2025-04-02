@@ -30,7 +30,7 @@ const RecetaDetail: React.FC = () => {
                     <IonTitle>{receta.nombre}</IonTitle>
                 </IonToolbar>
             </IonHeader>
-            <IonContent>
+            <IonContent className="ion-padding">
                 <IonText color="secondary">
                     <h2>Ingredientes:</h2>
                 </IonText>
