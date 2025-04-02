@@ -3,13 +3,13 @@ import { useEffect, useState } from "react"
 import { Receta } from "../../../domain/entities/receta"
 import { recetaService } from "../../../infrastructure/config"
 import { IonButton, IonButtons, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, } from "@ionic/react"
-import { add, arrowForward, options, trashOutline } from "ionicons/icons"
+import { add, arrowForward, options, pencilOutline, trashOutline } from "ionicons/icons"
 import RecetaAdd from "./RecetaAdd"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 
 const RecetasList: React.FC = () => {
     const [recetas, setRecetas] = useState<Receta[]>([])
-
+    const [id, setId] = useState<number>()
     const loadRecetas = async () => {
         const data = await recetaService.getAllRecetas()
         setRecetas(data)
@@ -21,7 +21,10 @@ const RecetasList: React.FC = () => {
     const [presentCreateRecipes, dismissCreateRecipes] = useIonModal(RecetaAdd, {
         dismiss: (data: string, role: string) => dismissCreateRecipes(data, role),
     })
-
+    const [presentUpdateRecipes, dismissUpdateRecipes] = useIonModal(RecetaAdd, {
+        dismiss: (data: string, role: string) => dismissUpdateRecipes(data, role),
+        recetaId: id
+    })
     const [presentAlert] = useIonAlert()
 
     const showCreateRecipesModal = () => {
@@ -32,7 +35,15 @@ const RecetasList: React.FC = () => {
             }
         })
     }
-
+    const showUpdateRecipesModal = (idRecipe: number) => {
+        setId(idRecipe)
+        presentUpdateRecipes({
+            onWillDismiss: (e: CustomEvent<OverlayEventDetail>) => {
+                if (e.detail.role === 'confirm')
+                    loadRecetas()
+            }
+        })
+    }
     const handleDelete = (id: number) => {
         presentAlert({
             header: "Estas seguro?",
@@ -77,12 +88,19 @@ const RecetasList: React.FC = () => {
                             {receta.nombre}
                         </IonLabel>
                         <IonButtons slot="end">
+                            <IonButton onClick={e => {
+                                e.stopPropagation()
+                                e.preventDefault()
+                                showUpdateRecipesModal(receta.id)
+                            }} color="tertiary" shape='round' fill='clear'>
+                                <IonIcon icon={pencilOutline} slot='icon-only' />
+                            </IonButton>
                             <IonButton onClick={(e) => {
                                 e.stopPropagation()
                                 e.preventDefault()
                                 handleDelete(receta.id)
-                            }} color="danger" fill="clear" shape="round" slot="icon-only">
-                                <IonIcon icon={trashOutline} />
+                            }} color="danger" fill="clear" shape="round" >
+                                <IonIcon icon={trashOutline} slot="icon-only" />
                             </IonButton>
                         </IonButtons>
                     </IonItem>
