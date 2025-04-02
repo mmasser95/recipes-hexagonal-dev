@@ -1,8 +1,9 @@
+import { Clipboard } from '@capacitor/clipboard'
 import { useEffect, useState } from "react"
 import { Receta } from "../../../domain/entities/receta"
 import { recetaService } from "../../../infrastructure/config"
-import { IonButton, IonButtons, IonFab, IonFabButton, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, } from "@ionic/react"
-import { add, trashOutline } from "ionicons/icons"
+import { IonButton, IonButtons, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, } from "@ionic/react"
+import { add, arrowForward, options, trashOutline } from "ionicons/icons"
 import RecetaAdd from "./RecetaAdd"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 
@@ -56,6 +57,12 @@ const RecetasList: React.FC = () => {
         e.detail.complete()
     }
 
+    const exportRecipes = async () => {
+        await Clipboard.write({
+            string: JSON.stringify(recetas)
+        })
+    }
+
     return (
         <>
             <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
@@ -82,10 +89,18 @@ const RecetasList: React.FC = () => {
                 ))
                 }
             </IonList >
-            <IonFab slot="fixed" vertical="bottom" horizontal="end" onClick={showCreateRecipesModal}>
+            <IonFab slot="fixed" vertical="bottom" horizontal="end">
                 <IonFabButton>
-                    <IonIcon icon={add} />
+                    <IonIcon icon={options} />
                 </IonFabButton>
+                <IonFabList side="top">
+                    <IonFabButton onClick={showCreateRecipesModal}>
+                        <IonIcon icon={add} />
+                    </IonFabButton>
+                    <IonFabButton onClick={exportRecipes}>
+                        <IonIcon icon={arrowForward} />
+                    </IonFabButton>
+                </IonFabList>
             </IonFab>
         </>
     )
