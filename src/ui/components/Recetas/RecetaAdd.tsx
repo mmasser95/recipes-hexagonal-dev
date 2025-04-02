@@ -1,6 +1,6 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert, IonReorderGroup, IonReorder, ItemReorderEventDetail } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert, IonReorderGroup, IonReorder, ItemReorderEventDetail, useIonActionSheet } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
 import { Receta } from "../../../domain/entities/receta"
 import { Paso } from "../../../domain/entities/paso"
@@ -33,6 +33,44 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
     const [updating, setUpdating] = useState<boolean>(false)
 
     const [presentAlert] = useIonAlert()
+
+    const [presentActionSheet] = useIonActionSheet()
+
+    const pressTimer = useRef<NodeJS.Timeout | null>(null)
+
+    const handleLongPress = (orden: number) => {
+        presentActionSheet({
+            header: "Actions",
+            buttons: [
+                {
+                    text: 'Delete',
+                    role: 'destructive',
+                    handler: () => {
+                        deletePaso(orden)
+                    }
+                },
+                {
+                    text: 'Update',
+                    handler: () => {
+                        presentAlert(`Update ${orden}`)
+                    }
+                }
+            ]
+        })
+    }
+
+    const startPressTimer = (orden: number) => {
+        pressTimer.current = setTimeout(() => {
+            handleLongPress(orden)
+        }, 600);
+    }
+
+    const clearPressTimer = () => {
+        if (pressTimer.current) {
+            clearTimeout(pressTimer.current)
+            pressTimer.current = null
+        }
+    }
 
     const magnitudes: Magnitud[] = ["gramos", "mililitros", "unidades", "cucharadas"];
 
@@ -231,17 +269,15 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                         {receta.instrucciones.length > 0 && <IonList>
                             <IonReorderGroup disabled={false} onIonItemReorder={(e) => handleReorder(e)}>
                                 {receta.instrucciones.map(el => (
-                                    <IonItem key={el.orden}>
+                                    <IonItem
+                                        onTouchStart={() => startPressTimer(el.orden)}
+                                        onTouchEnd={clearPressTimer}
+                                        onMouseDown={() => startPressTimer(el.orden)}
+                                        onMouseUp={clearPressTimer}
+                                        onMouseLeave={clearPressTimer}
+                                        key={el.orden}>
                                         <IonReorder slot="start"></IonReorder>
                                         <IonText>{el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}</IonText>
-                                        <IonButtons slot="end">
-                                            <IonButton color="tertiary">
-                                                <IonIcon icon={pencilOutline} slot="icon-only" />
-                                            </IonButton>
-                                            <IonButton color="danger" onClick={() => deletePaso(el.orden)}>
-                                                <IonIcon icon={trashOutline} slot="icon-only" ></IonIcon>
-                                            </IonButton>
-                                        </IonButtons>
                                     </IonItem>
                                 ))}
                             </IonReorderGroup>
