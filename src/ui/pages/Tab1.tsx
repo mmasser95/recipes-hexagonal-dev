@@ -10,7 +10,7 @@ const Tab1: React.FC = () => {
           <IonTitle>Recetas</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className='ion-padding'>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Recetas</IonTitle>

@@ -20,7 +20,7 @@ const ModalLayout: React.FC<Props> = ({ title, children, dismiss }) => {
                     </IonButtons>
                 </IonToolbar>
             </IonHeader>
-            <IonContent>
+            <IonContent className="ion-padding">
                 {children}
             </IonContent>
         </IonPage>
