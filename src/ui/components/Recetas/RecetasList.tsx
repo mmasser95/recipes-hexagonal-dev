@@ -2,7 +2,7 @@ import { Clipboard } from '@capacitor/clipboard'
 import { useEffect, useState } from "react"
 import { Receta } from "../../../domain/entities/receta"
 import { recetaService } from "../../../infrastructure/config"
-import { IonButton, IonButtons, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, } from "@ionic/react"
+import { IonButton, IonButtons, IonFab, IonFabButton, IonFabList, IonIcon, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, RefresherEventDetail, useIonAlert, useIonModal, useIonToast, } from "@ionic/react"
 import { add, arrowForward, options, pencilOutline, trashOutline } from "ionicons/icons"
 import RecetaAdd from "./RecetaAdd"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
@@ -26,6 +26,8 @@ const RecetasList: React.FC = () => {
         recetaId: id
     })
     const [presentAlert] = useIonAlert()
+
+    const [presentToast] = useIonToast()
 
     const showCreateRecipesModal = () => {
         presentCreateRecipes({
@@ -71,6 +73,11 @@ const RecetasList: React.FC = () => {
     const exportRecipes = async () => {
         await Clipboard.write({
             string: JSON.stringify(recetas)
+        })
+        presentToast({
+            message: "Receptes copiades al portapapers",
+            duration: 2000,
+            color: 'success'
         })
     }
 
