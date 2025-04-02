@@ -52,7 +52,9 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                 {
                     text: 'Update',
                     handler: () => {
-                        presentAlert(`Update ${orden}`)
+                        const ing = receta.instrucciones.find(e => e.orden === orden)
+                        if (ing)
+                            updatePaso(ing)
                     }
                 }
             ]
@@ -188,10 +190,22 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
         })
     }
 
-    // const updateIngrediente = (ingrediente: Ingrediente) => {
-    // }
-    // const updatePaso = (orden: number) => {
-    // }
+    const updateIngrediente = (ingrediente: Ingrediente) => {
+        setIngrediente(ingrediente)
+        const updatedReceta: Omit<Receta, 'id'> = {
+            ...receta,
+            ingredientes: receta.ingredientes.filter(e => e.nombre !== ingrediente.nombre || e.cantidad !== ingrediente.cantidad || e.magnitud !== ingrediente.magnitud)
+        }
+        setReceta(updatedReceta)
+    }
+    const updatePaso = (paso: Paso) => {
+        setPaso(paso)
+        const updatedReceta: Omit<Receta, 'id'> = {
+            ...receta,
+            instrucciones: receta.instrucciones.filter(e => e.orden !== paso.orden)
+        }
+        setReceta(updatedReceta)
+    }
 
     return (
         <ModalLayout
@@ -239,7 +253,7 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                                 <IonItem>
                                     <IonText>{el.nombre} - {el.cantidad} {el.magnitud}</IonText>
                                     <IonButtons slot="end">
-                                        <IonButton color="tertiary">
+                                        <IonButton color="tertiary" onClick={() => updateIngrediente(el)}>
                                             <IonIcon icon={pencilOutline} slot="icon-only" />
                                         </IonButton>
                                         <IonButton color="danger" onClick={() => deleteIngrediente(el)}>
