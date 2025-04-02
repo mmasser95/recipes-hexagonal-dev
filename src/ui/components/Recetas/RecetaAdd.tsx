@@ -1,4 +1,4 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert, IonReorderGroup, IonReorder } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert, IonReorderGroup, IonReorder, ItemReorderEventDetail } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
 import { useEffect, useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
@@ -138,8 +138,8 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
         })
     }
 
-    const handleReorder = (e: CustomEvent) => {
-        const reorderdItems = e.complete(receta.instrucciones)
+    const handleReorder = (e: CustomEvent<ItemReorderEventDetail>) => {
+        const reorderdItems = e.detail.complete(receta.instrucciones)
         const updatedInstrucciones = reorderdItems.map((paso: Paso, idx: number) => ({
             ...paso,
             orden: idx + 1
@@ -229,7 +229,7 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                 <IonRow>
                     <IonCol>
                         {receta.instrucciones.length > 0 && <IonList>
-                            <IonReorderGroup disabled={false} onIonItemReorder={(e) => handleReorder(e.detail)}>
+                            <IonReorderGroup disabled={false} onIonItemReorder={(e) => handleReorder(e)}>
                                 {receta.instrucciones.map(el => (
                                     <IonItem key={el.orden}>
                                         <IonReorder slot="start"></IonReorder>
