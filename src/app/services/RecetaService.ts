@@ -12,6 +12,9 @@ export class RecetaService {
     async createReceta(receta: Omit<Receta, 'id'>): Promise<Receta> {
         return this.repo.createReceta(receta)
     }
+    async updateReceta(id: number, receta: Receta): Promise<Receta> {
+        return this.repo.updateReceta(id, receta)
+    }
     async deleteReceta(id: number): Promise<void> {
         return this.repo.deleteReceta(id)
     }
