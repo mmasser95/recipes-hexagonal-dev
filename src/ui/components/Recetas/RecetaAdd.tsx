@@ -1,4 +1,4 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert, IonReorderGroup, IonReorder } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
 import { useEffect, useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
@@ -136,8 +136,24 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                 }
             ]
         })
-
     }
+
+    const handleReorder = (e: CustomEvent) => {
+        const reorderdItems = e.complete(receta.instrucciones)
+        const updatedInstrucciones = reorderdItems.map((paso: Paso, idx: number) => ({
+            ...paso,
+            orden: idx + 1
+        }))
+        setReceta({
+            ...receta,
+            instrucciones: updatedInstrucciones
+        })
+    }
+
+    // const updateIngrediente = (ingrediente: Ingrediente) => {
+    // }
+    // const updatePaso = (orden: number) => {
+    // }
 
     return (
         <ModalLayout
@@ -213,19 +229,22 @@ const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
                 <IonRow>
                     <IonCol>
                         {receta.instrucciones.length > 0 && <IonList>
-                            {receta.instrucciones.map(el => (
-                                <IonItem>
-                                    <IonText>{el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}</IonText>
-                                    <IonButtons slot="end">
-                                        <IonButton color="tertiary">
-                                            <IonIcon icon={pencilOutline} slot="icon-only" />
-                                        </IonButton>
-                                        <IonButton color="danger" onClick={() => deletePaso(el.orden)}>
-                                            <IonIcon icon={trashOutline} slot="icon-only" ></IonIcon>
-                                        </IonButton>
-                                    </IonButtons>
-                                </IonItem>
-                            ))}
+                            <IonReorderGroup disabled={false} onIonItemReorder={(e) => handleReorder(e.detail)}>
+                                {receta.instrucciones.map(el => (
+                                    <IonItem key={el.orden}>
+                                        <IonReorder slot="start"></IonReorder>
+                                        <IonText>{el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}</IonText>
+                                        <IonButtons slot="end">
+                                            <IonButton color="tertiary">
+                                                <IonIcon icon={pencilOutline} slot="icon-only" />
+                                            </IonButton>
+                                            <IonButton color="danger" onClick={() => deletePaso(el.orden)}>
+                                                <IonIcon icon={trashOutline} slot="icon-only" ></IonIcon>
+                                            </IonButton>
+                                        </IonButtons>
+                                    </IonItem>
+                                ))}
+                            </IonReorderGroup>
                         </IonList>}
                     </IonCol>
                 </IonRow>
