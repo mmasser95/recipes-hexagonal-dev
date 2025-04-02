@@ -1,17 +1,18 @@
-import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon } from "@ionic/react"
+import { IonCol, IonRow, IonGrid, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea, IonList, IonItem, IonIcon, IonButtons, IonText, useIonAlert } from "@ionic/react"
 import ModalLayout from "../../layouts/modal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Ingrediente, Magnitud } from "../../../domain/entities/ingrediente"
 import { Receta } from "../../../domain/entities/receta"
 import { Paso } from "../../../domain/entities/paso"
 import { recetaService } from "../../../infrastructure/config"
-import { add } from "ionicons/icons"
+import { add, pencilOutline, trashOutline } from "ionicons/icons"
 
 interface Props {
-    dismiss: (data: string, role: string) => void
+    dismiss: (data: string, role: string) => void,
+    recetaId?: number
 }
 
-const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
+const RecetaAdd: React.FC<Props> = ({ dismiss, recetaId }) => {
 
     const [receta, setReceta] = useState<Omit<Receta, 'id'>>({
         nombre: "",
@@ -29,6 +30,10 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
         texto: ""
     })
 
+    const [updating, setUpdating] = useState<boolean>(false)
+
+    const [presentAlert] = useIonAlert()
+
     const magnitudes: Magnitud[] = ["gramos", "mililitros", "unidades", "cucharadas"];
 
     const createIt = async () => {
@@ -39,6 +44,23 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
             console.error(error);
         }
     }
+
+    const updateIt = async () => {
+        try {
+            await recetaService.updateReceta(recetaId!, { ...receta, id: recetaId! })
+            dismiss("", "confirm")
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        if (recetaId) {
+            setUpdating(true)
+            recetaService.getReceta(recetaId)
+                .then(r => r && setReceta(r))
+        }
+    }, [])
 
     const addIngrediente = () => {
         setReceta({
@@ -64,18 +86,71 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
         })
     }
 
+    const deleteIngrediente = (ingrediente: Ingrediente) => {
+        presentAlert({
+            header: "¿Estas seguro?",
+            message: "¿Estás seguro que quieres eliminar el ingrediente? Esta acción no se puede deshacer.",
+            buttons: [
+                {
+                    text: "Si",
+                    role: "destructive",
+                    handler: () => {
+                        const updatedReceta: Omit<Receta, 'id'> = {
+                            ...receta,
+                            ingredientes: receta.ingredientes.filter(e => e.nombre !== ingrediente.nombre || e.cantidad !== ingrediente.cantidad || e.magnitud !== ingrediente.magnitud)
+                        }
+                        setReceta(updatedReceta)
+                    }
+                }, {
+                    text: "No",
+                    role: "cancel"
+                }
+            ]
+        })
+    }
+
+    const deletePaso = (orden: number) => {
+        presentAlert({
+            header: "¿Estás seguro?",
+            message: "¿Estás seguro que quieres borrar este paso? Esta acción no se puede deshacer.",
+            buttons: [
+                {
+                    text: 'Si',
+                    role: "destructive",
+                    handler: () => {
+                        const updatedReceta: Omit<Receta, 'id'> = {
+                            ...receta,
+                            instrucciones: receta.instrucciones
+                                .filter(e => e.orden !== orden)
+                                .map((paso, idx) => ({
+                                    ...paso,
+                                    orden: idx + 1
+                                }))
+                        }
+                        setReceta(updatedReceta)
+                    }
+                },
+                {
+                    text: "No",
+                    role: "cancel"
+                }
+            ]
+        })
+
+    }
+
     return (
         <ModalLayout
-            title="Crear receta"
+            title={updating ? "Actualizar receta" : "Crear receta"}
             dismiss={dismiss}
         >
             <IonGrid>
                 <IonRow>
                     <IonCol>
-                        <IonInput label="Nombre receta" labelPlacement="floating" onIonChange={e => setReceta({ ...receta, nombre: e.detail.value! })} />
+                        <IonInput label="Nombre receta" labelPlacement="floating" onIonChange={e => setReceta({ ...receta, nombre: e.detail.value! })} value={receta.nombre} />
                     </IonCol>
                 </IonRow>
-                <IonRow>
+                <IonRow className="ion-align-items-center">
                     <IonCol size="5">
                         <IonInput label="Nombre ingrediente" labelPlacement="floating" onIonChange={e => setIngrediente({ ...ingrediente, nombre: e.detail.value! })} value={ingrediente.nombre} />
                     </IonCol>
@@ -108,7 +183,15 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                         {receta.ingredientes.length > 0 && <IonList>
                             {receta.ingredientes.map(el => (
                                 <IonItem>
-                                    {el.nombre} - {el.cantidad} {el.magnitud}
+                                    <IonText>{el.nombre} - {el.cantidad} {el.magnitud}</IonText>
+                                    <IonButtons slot="end">
+                                        <IonButton color="tertiary">
+                                            <IonIcon icon={pencilOutline} slot="icon-only" />
+                                        </IonButton>
+                                        <IonButton color="danger" onClick={() => deleteIngrediente(el)}>
+                                            <IonIcon icon={trashOutline} slot="icon-only" />
+                                        </IonButton>
+                                    </IonButtons>
                                 </IonItem>
                             ))}
                         </IonList>}
@@ -132,7 +215,15 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                         {receta.instrucciones.length > 0 && <IonList>
                             {receta.instrucciones.map(el => (
                                 <IonItem>
-                                    {el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}
+                                    <IonText>{el.orden} {el.tiempo && `(${el.tiempo} min) `}- {el.texto}</IonText>
+                                    <IonButtons slot="end">
+                                        <IonButton color="tertiary">
+                                            <IonIcon icon={pencilOutline} slot="icon-only" />
+                                        </IonButton>
+                                        <IonButton color="danger" onClick={() => deletePaso(el.orden)}>
+                                            <IonIcon icon={trashOutline} slot="icon-only" ></IonIcon>
+                                        </IonButton>
+                                    </IonButtons>
                                 </IonItem>
                             ))}
                         </IonList>}
@@ -140,7 +231,7 @@ const RecetaAdd: React.FC<Props> = ({ dismiss }) => {
                 </IonRow>
                 <IonRow>
                     <IonCol>
-                        <IonButton expand="block" onClick={createIt}>Crear receta</IonButton>
+                        <IonButton expand="block" onClick={updating ? updateIt : createIt}>{updating ? "Actualizar receta" : "Crear receta"}</IonButton>
                     </IonCol>
                 </IonRow>
             </IonGrid>
